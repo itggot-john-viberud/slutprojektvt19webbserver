@@ -55,6 +55,20 @@ def chattrooms(username)
     db = connect()
     user_id = get_user_id(username)
     roominfo = get_rooms_in_room(user_id)
-    
-    return roominfo.first
+    return roominfo
 end
+
+def get_chat(room_id)
+    db = connect()
+
+    result = db.execute("SELECT Username, Text FROM chat WHERE RoomId = ?", room_id.to_i)
+    return result
+end
+
+
+def show(room_id)
+    chat = get_chat(room_id)
+    return chat
+
+end
+

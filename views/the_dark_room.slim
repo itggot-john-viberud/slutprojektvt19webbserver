@@ -1,17 +1,26 @@
 div class="wrapped"
+    div class="menu"
     div class="rooms_menu"
         - for room in rooms do
             section class="room_menu"
                 article
                     div class="controls"
-                        form action="/show/#{room["RoomId"]}" method="GET"
+                        form action="/the_dark_room/#{session[:user]}/#{room["Id"]}" method="GET"
                             button type="submit" value="show" 
                                 i class="material-icons" Show
-                        form action="/unshow/#{room["RoomId"]}" method="GET"
+                        form action="/the_dark_room/#{session[:user]}" method="GET"
                             button type="submit" value="unshow"
                                 i class="material-icons" unshow    
-                        form action="/leave/#{room["RoomId"]}" method="POST" 
+                        form action="/leave/#{room["Id"]}" method="POST" 
                             button type="submit" value="leave" 
                                 i class="material-icons" leave
 
                     p class="Name" #{room["Name"]}
+    - if chats != "NOOB"
+        div class="chat"
+            - for chat in chats do
+                div class="chat" 
+                    p class="Username" #{chat["Username"]}
+                    p class="Text" #{chat["Text"]}
+
+        
