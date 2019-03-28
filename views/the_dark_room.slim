@@ -22,5 +22,8 @@ div class="wrapped"
                 div class="chat" 
                     p class="Username" #{chat["Username"]}
                     p class="Text" #{chat["Text"]}
+            form action="/login" Method="POST" 
+                input name="Username" type="text" placeholder="Username"
+                input type="Submit" value="Login"
 
         
