@@ -1,1 +1,17 @@
-h1 hejsan
+div class="wrapped"
+    div class="rooms_menu"
+        - for room in rooms do
+            section class="room_menu"
+                article
+                    div class="controls"
+                        form action="/show/#{room["RoomId"]}" method="GET"
+                            button type="submit" value="show" 
+                                i class="material-icons" Show
+                        form action="/unshow/#{room["RoomId"]}" method="GET"
+                            button type="submit" value="unshow"
+                                i class="material-icons" unshow    
+                        form action="/leave/#{room["RoomId"]}" method="POST" 
+                            button type="submit" value="leave" 
+                                i class="material-icons" leave
+
+                    p class="Name" #{room["Name"]}

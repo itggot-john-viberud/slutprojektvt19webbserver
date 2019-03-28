@@ -37,7 +37,24 @@ def loggin(params)
     end
 end
 
+def get_user_id(username)
+    db = connect()
+    user_id = db.execute("SELECT Id FROM user WHERE Username = ?", username)
+    return user_id.first["Id"]
+end
 
-def chattrooms()
-#posts = db.execute("SELECT Rubrik, Bild, Text, Id FROM posts WHERE Creator = '#{session[:user]}'")
+def get_rooms_in_room(user_id)
+    db = connect()
+    rooms = db.execute("select room.Id, room.Name from room
+        inner join user_room on room.Id = user_room.RoomId
+        where user_room.UserId = ?", user_id)
+    return rooms
+end
+
+def chattrooms(username)
+    db = connect()
+    user_id = get_user_id(username)
+    roominfo = get_rooms_in_room(user_id)
+    
+    return roominfo.first
 end

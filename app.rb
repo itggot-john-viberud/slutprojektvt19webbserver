@@ -57,8 +57,11 @@ end
 
 
 get("/the_dark_room/:username") do
-    chattrooms()
-    slim(:the_dark_room)
+    username = session[:user]
+    room = chattrooms(username)
+    byebug
+    slim(:the_dark_room, locals:{
+        rooms: room})
 end
 
 
