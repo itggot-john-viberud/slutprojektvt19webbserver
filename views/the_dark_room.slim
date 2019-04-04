@@ -20,6 +20,13 @@ div class="wrapped"
         div class="chat"
             - for chat in chats do
                 div class="chat" 
+                    - if chat["Username"] == session[:user]
+                        form action="/edit/#{chat["Id"]}" method="GET" 
+                            button type="submit" value="edit"
+                                i class="material-icons" edit
+                        form action="/delete/#{chat["Id"]}" method="POST" 
+                            button type="submit" value="delete" 
+                                i class="material-icons" delete
                     p class="Username" #{chat["Username"]}
                     p class="Text" #{chat["Text"]}
                     - if chat["Bild"]

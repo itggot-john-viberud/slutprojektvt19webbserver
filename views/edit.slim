@@ -1,0 +1,7 @@
+div class="wrapper"
+    form action="/edit_execute/#{chat["Id"]}" method="POST"
+        article
+            div class="info" 
+                input name="Bild" placeholder="Bild" type="file" value="#{chat["Bild"]}"
+                input name="Text" placeholder="Text" type="text" value="#{chat["Text"]}"
+                input type="submit" value="Update"

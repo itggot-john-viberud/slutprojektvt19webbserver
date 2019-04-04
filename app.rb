@@ -80,3 +80,19 @@ post("/new_message") do
     send_message(params)
     redirect("/the_dark_room/:username/#{session[:room_id]}")
 end 
+
+post('/delete/:id') do
+    delete(params)
+    redirect("/the_dark_room/:username/#{session[:room_id]}")
+end
+
+get("/edit/:id") do
+    result = edit(params)
+    slim(:edit, locals:{
+    chat: result.first})    
+end
+
+post('/edit_execute/:id') do
+    edit_execute(params)
+    redirect("/the_dark_room/:username/#{session[:room_id]}")
+end

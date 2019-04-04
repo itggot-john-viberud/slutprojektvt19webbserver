@@ -61,7 +61,7 @@ end
 def get_chat(room_id)
     db = connect()
 
-    result = db.execute("SELECT Username, Text, Bild FROM chat WHERE RoomId = ?", room_id.to_i)
+    result = db.execute("SELECT Id, Username, Text, Bild FROM chat WHERE RoomId = ?", room_id.to_i)
     return result
 end
 
@@ -102,4 +102,29 @@ def send_message(params)
     return result
 end
 
+def delete(params)
+    db = connect()
+    id = params["id"]
+    result_new = db.execute("DELETE FROM chat WHERE Id=?", id)
+end
+
+def edit(params)
+    db = connect()
+    id = params["id"]
+    result = db.execute("SELECT RoomId, Text, Bild, Username FROM chat WHERE Id=?", id)
+    return result
+end
+
+def edit_execute(params)
+    db = connect()
+    new_rubrik = params["Rubrik"]
+    new_bild = params["Bild"]
+    new_text = params["Text"]
+    id = params["id"]
+    result_new = db.execute("UPDATE chat
+        SET Bild = ?, Text = ?
+        WHERE Id = ?",
+        new_bild, new_text, id)
+
+end
 
