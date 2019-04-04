@@ -61,7 +61,7 @@ end
 def get_chat(room_id)
     db = connect()
 
-    result = db.execute("SELECT Username, Text FROM chat WHERE RoomId = ?", room_id.to_i)
+    result = db.execute("SELECT Username, Text, Bild FROM chat WHERE RoomId = ?", room_id.to_i)
     return result
 end
 
@@ -71,4 +71,35 @@ def show(room_id)
     return chat
 
 end
+
+def picture(file, filename)
+    file_name = SecureRandom.hex(10)
+    oof = filename.split('.')
+    file_name <<'.'
+    file_name << oof[1]
+    File.open("./public/img/chat/#{file_name}", 'wb') do |f|
+        f.write(file.read)
+    end
+    return file_name
+end
+
+#FileUtils.cp( params["file"]["tempfile"].path, "./omg.jpg")
+
+def send_message(params)
+    db = connect()
+    new_text = params["Text"]
+    creator = session[:user]
+    room_id = session[:room_id]
+    if params[:file]
+        filename = params[:file][:filename]
+        file = params[:file][:tempfile]
+        file_name = picture(file, filename)
+        result = db.execute("INSERT INTO chat (RoomId, Text, Bild, Username) VALUES (?,?,?,?)", room_id, new_text, file_name, creator)
+    else
+        result = db.execute("INSERT INTO chat (RoomId, Text, Username) VALUES (?,?,?)", room_id, new_text, creator)
+    end
+
+    return result
+end
+
 

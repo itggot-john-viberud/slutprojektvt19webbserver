@@ -22,8 +22,12 @@ div class="wrapped"
                 div class="chat" 
                     p class="Username" #{chat["Username"]}
                     p class="Text" #{chat["Text"]}
-            form action="/login" Method="POST" 
-                input name="Username" type="text" placeholder="Username"
-                input type="Submit" value="Login"
+                    - if chat["Bild"]
+                        img src="/img/chat/#{chat["Bild"]}"
+            
+            form action="/new_message" Method="POST" enctype="multipart/form-data"
+                input type="file" name="file" accept="image/*"
+                input name="Text" placeholder="Text" type="text"
+                input type="submit" value="Send"
 
         

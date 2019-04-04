@@ -7,7 +7,7 @@ require_relative 'function.rb'
 enable :sessions
 
 configure do
-    set :secured_paths, ["/the_dark_room/:username"]
+    set :secured_paths, ["/the_dark_room/:username", "/new_message"]
 end
 
 before do
@@ -66,6 +66,9 @@ end
 
 get('/the_dark_room/:username/:id') do
     room_id = params["id"]
+    if params["id"] != "css.css"
+        session[:room_id] = params["id"]
+    end
     username = session[:user]
     room = chattrooms(username)
     chat = show(room_id)
@@ -73,4 +76,7 @@ get('/the_dark_room/:username/:id') do
         rooms: room, chats: chat})
 end
 
-
+post("/new_message") do
+    send_message(params)
+    redirect("/the_dark_room/:username/#{session[:room_id]}")
+end 
