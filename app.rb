@@ -3,12 +3,15 @@ require 'sinatra'
 require 'SQLite3'
 require 'bcrypt'
 require 'byebug'
+require 'sinatra-websocket'
 require_relative 'function.rb'
+
 enable :sessions
 
-configure do
-    set :secured_paths, ["/the_dark_room/:username", "/new_message"]
-end
+set :secured_paths, ["/the_dark_room/:username", "/new_message"]
+set :sockets, []
+set :server, 'thin'
+
 
 before do
     if settings.secured_paths.any? { |elem| request.path.start_with?(elem) } 
@@ -72,8 +75,24 @@ get('/the_dark_room/:username/:id') do
     username = session[:user]
     room = chattrooms(username)
     chat = show(room_id)
-    slim(:the_dark_room, locals:{
-        rooms: room, chats: chat})
+    if !request.websocket?
+        slim(:the_dark_room, locals:{
+            rooms: room, chats: chat})
+    else
+        request.websocket do |ws|
+            ws.onopen do
+                settings.sockets << ws
+            end
+            ws.onmessage do |msg|
+                EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
+                send_message(params, msg)
+            end
+            ws.onclose do
+                warn("websocket closed")
+                settings.sockets.delete(ws)
+            end
+        end
+    end
 end
 
 post("/new_message") do
@@ -88,11 +107,13 @@ end
 
 get("/edit/:id") do
     result = edit(params)
+    byebug
     slim(:edit, locals:{
     chat: result.first})    
 end
 
 post('/edit_execute/:id') do
     edit_execute(params)
+    byebug
     redirect("/the_dark_room/:username/#{session[:room_id]}")
 end

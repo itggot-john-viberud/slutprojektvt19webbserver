@@ -17,6 +17,7 @@ div class="wrapped"
 
                     p class="Name" #{room["Name"]}
     - if chats != "NOOB"
+        script src="/text/websocket.js"
         div class="chat"
             - for chat in chats do
                 div class="chat" 
@@ -31,10 +32,10 @@ div class="wrapped"
                     p class="Text" #{chat["Text"]}
                     - if chat["Bild"]
                         img src="/img/chat/#{chat["Bild"]}"
-            
-            form action="/new_message" Method="POST" enctype="multipart/form-data"
+            div#msgs
+            form#form action="/new_message" Method="POST" enctype="multipart/form-data"
                 input type="file" name="file" accept="image/*"
-                input name="Text" placeholder="Text" type="text"
+                input#input name="Text" placeholder="Text" type="text"
                 input type="submit" value="Send"
 
         

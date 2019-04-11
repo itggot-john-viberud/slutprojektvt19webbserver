@@ -6,6 +6,18 @@ require 'byebug'
 require_relative 'app.rb'
 enable :sessions
 
+
+# require 'sinatra-websocket'
+
+
+
+def web()
+    
+end
+
+
+
+
 def connect
     db = SQLite3::Database.new("db/database.db")
     db.results_as_hash = true
@@ -31,7 +43,7 @@ def loggin(params)
     db = connect()
     result = db.execute("SELECT Username, Password FROM user WHERE Username = '#{params["Username"]}'")
     if BCrypt::Password.new(result[0]["Password"]) == params["Password"]
-       return true
+        return true
     else
         return false
     end
@@ -48,83 +60,94 @@ def get_rooms_in_room(user_id)
     rooms = db.execute("select room.Id, room.Name from room
         inner join user_room on room.Id = user_room.RoomId
         where user_room.UserId = ?", user_id)
-    return rooms
-end
-
-def chattrooms(username)
-    db = connect()
-    user_id = get_user_id(username)
-    roominfo = get_rooms_in_room(user_id)
-    return roominfo
-end
-
-def get_chat(room_id)
-    db = connect()
-
-    result = db.execute("SELECT Id, Username, Text, Bild FROM chat WHERE RoomId = ?", room_id.to_i)
-    return result
-end
-
-
-def show(room_id)
-    chat = get_chat(room_id)
-    return chat
-
-end
-
-def picture(file, filename)
-    file_name = SecureRandom.hex(10)
-    oof = filename.split('.')
-    file_name <<'.'
-    file_name << oof[1]
-    File.open("./public/img/chat/#{file_name}", 'wb') do |f|
-        f.write(file.read)
+        return rooms
     end
-    return file_name
-end
-
-#FileUtils.cp( params["file"]["tempfile"].path, "./omg.jpg")
-
-def send_message(params)
-    db = connect()
-    new_text = params["Text"]
-    creator = session[:user]
-    room_id = session[:room_id]
-    if params[:file]
-        filename = params[:file][:filename]
-        file = params[:file][:tempfile]
-        file_name = picture(file, filename)
-        result = db.execute("INSERT INTO chat (RoomId, Text, Bild, Username) VALUES (?,?,?,?)", room_id, new_text, file_name, creator)
-    else
-        result = db.execute("INSERT INTO chat (RoomId, Text, Username) VALUES (?,?,?)", room_id, new_text, creator)
+    
+    def chattrooms(username)
+        db = connect()
+        user_id = get_user_id(username)
+        roominfo = get_rooms_in_room(user_id)
+        web()
+        return roominfo
     end
+    
+    def get_chat(room_id)
+        db = connect()
+        
+        result = db.execute("SELECT Id, Username, Text, Bild FROM chat WHERE RoomId = ?", room_id.to_i)
+        return result
+    end
+    
+    
+    def show(room_id)
+        chat = get_chat(room_id)
+        return chat
+        
+    end
+    
+    def picture(file, filename)
+        file_name = SecureRandom.hex(10)
+        oof = filename.split('.')
+        file_name <<'.'
+        file_name << oof[1]
+        File.open("./public/img/chat/#{file_name}", 'wb') do |f|
+            f.write(file.read)
+        end
+        return file_name
+    end
+    
+    #FileUtils.cp( params["file"]["tempfile"].path, "./omg.jpg")
+    
+    def send_message(params, msg)
+        db = connect()
+        new_text = msg
+        creator = session[:user]
+        room_id = session[:room_id]
+        if params[:file]
+            filename = params[:file][:filename]
+            file = params[:file][:tempfile]
+            file_name = picture(file, filename)
+            result = db.execute("INSERT INTO chat (RoomId, Text, Bild, Username) VALUES (?,?,?,?)", room_id, new_text, file_name, creator)
+        else
+            result = db.execute("INSERT INTO chat (RoomId, Text, Username) VALUES (?,?,?)", room_id, new_text, creator)
+        end
+        
+        return result
+    end
+    
+    def delete(params)
+        db = connect()
+        id = params["id"]
+        result_new = db.execute("DELETE FROM chat WHERE Id=?", id)
+    end
+    
+    def edit(params)
+        db = connect()
+        id = params["id"]
+        result = db.execute("SELECT RoomId, Text, Bild, Id, Username FROM chat WHERE Id=?", id)
+        return result
+    end
+    
+    def edit_execute(params)
+        db = connect()
+        new_text = params["Text"]
+        id = params["id"]
 
-    return result
-end
-
-def delete(params)
-    db = connect()
-    id = params["id"]
-    result_new = db.execute("DELETE FROM chat WHERE Id=?", id)
-end
-
-def edit(params)
-    db = connect()
-    id = params["id"]
-    result = db.execute("SELECT RoomId, Text, Bild, Username FROM chat WHERE Id=?", id)
-    return result
-end
-
-def edit_execute(params)
-    db = connect()
-    new_rubrik = params["Rubrik"]
-    new_bild = params["Bild"]
-    new_text = params["Text"]
-    id = params["id"]
-    result_new = db.execute("UPDATE chat
-        SET Bild = ?, Text = ?
-        WHERE Id = ?",
-        new_bild, new_text, id)
-
-end
-
+        if params[:file]
+            filename = params[:file][:filename]
+            file = params[:file][:tempfile]
+            file_name = picture(file, filename)
+            result_new = db.execute("UPDATE chat
+                SET Text = ?, Bild = ?
+                WHERE Id = ?",
+                new_text, file_name, id)
+        else
+            result_new = db.execute("UPDATE chat
+                SET Text = ?
+                WHERE Id = ?",
+                new_text, id)
+        end
+            
+        end
+        
+        
