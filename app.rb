@@ -84,7 +84,11 @@ get('/the_dark_room/:username/:id') do
                 settings.sockets << ws
             end
             ws.onmessage do |msg|
+                if params[:file]
+                    EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
+                end
                 EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
+                EM.next_tick { settings.sockets.each{|s| s.send(session[:user]) } }
                 send_message(params, msg)
             end
             ws.onclose do
@@ -116,4 +120,13 @@ post('/edit_execute/:id') do
     edit_execute(params)
     byebug
     redirect("/the_dark_room/:username/#{session[:room_id]}")
+end
+
+get("/create_room") do
+    slim(:create_room)
+end
+
+post("/finish_room") do
+    finish_room(params)
+    redirect("/the_dark_room/:username")
 end

@@ -1,5 +1,8 @@
 div class="wrapped"
     div class="menu"
+    form method="get" action="/create_room"
+        button type="submit" Create Room
+
     div class="rooms_menu"
         - for room in rooms do
             section class="room_menu"
