@@ -111,8 +111,9 @@ def send_message(params, msg)
     else
         result = db.execute("INSERT INTO chat (RoomId, Text, Username) VALUES (?,?,?)", room_id, new_text, creator)
     end
-    
-    return result
+
+    result = db.execute("SELECT Id FROM chat WHERE Text = ? AND Username = ?", new_text, creator)
+    return result[-1].first[1]
 end
 
 def delete(params)

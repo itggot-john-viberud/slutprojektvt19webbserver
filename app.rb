@@ -3,6 +3,7 @@ require 'sinatra'
 require 'SQLite3'
 require 'bcrypt'
 require 'byebug'
+require 'json'
 require 'sinatra-websocket'
 require_relative 'function.rb'
 
@@ -84,12 +85,22 @@ get('/the_dark_room/:username/:id') do
                 settings.sockets << ws
             end
             ws.onmessage do |msg|
+                message_id = send_message(params, msg)
+                p message_id
                 if params[:file]
-                    EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
+                    EM.next_tick { settings.sockets.each{|s| s.send(file_name) } }
                 end
-                EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
-                EM.next_tick { settings.sockets.each{|s| s.send(session[:user]) } }
-                send_message(params, msg)
+                EM.next_tick { settings.sockets.each{|s| 
+                    s.send(
+                        {
+                            message: msg,
+                            id: message_id,
+                            user: session[:user],
+                        }.to_json
+                    ) 
+                } }
+                # EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
+                # EM.next_tick { settings.sockets.each{|s| s.send(session[:user]) } }
             end
             ws.onclose do
                 warn("websocket closed")
@@ -110,15 +121,14 @@ post('/delete/:id') do
 end
 
 get("/edit/:id") do
-    result = edit(params)
     byebug
+    result = edit(params)
     slim(:edit, locals:{
     chat: result.first})    
 end
 
 post('/edit_execute/:id') do
     edit_execute(params)
-    byebug
     redirect("/the_dark_room/:username/#{session[:room_id]}")
 end
 

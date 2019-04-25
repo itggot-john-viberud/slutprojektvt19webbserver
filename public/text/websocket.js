@@ -1,7 +1,17 @@
 window.onload = function(){
     (function(){
       var show = function(el){
-        return function(msg){ el.innerHTML = msg + '<br />' + el.innerHTML; }
+        return function(msg){
+          let parsed = JSON.parse(msg)
+          console.log(parsed.message)
+          console.log(parsed.user)
+          id = parsed.id
+          newarray = '<form method="get" action="/edit/'+id+'"><button type="submit">Edit</button></form>' +'<form method="post" action="/delete/#{chat["Id"]}"><button type="submit">Delete</button></form><br />' + parsed.user + '</br>' + '</br>' +  parsed.message + '</br>' + '</br>'; 
+          el.innerHTML = el.innerHTML + newarray
+      }
+
+
+      
       }(document.getElementById('msgs'));
 
       var ws       = new WebSocket('ws://' + window.location.host + window.location.pathname);
