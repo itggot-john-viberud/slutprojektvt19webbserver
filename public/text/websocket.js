@@ -6,7 +6,7 @@ window.onload = function(){
           console.log(parsed.message)
           console.log(parsed.user)
           id = parsed.id
-          newarray = '<form method="get" action="/edit/'+id+'"><button type="submit">Edit</button></form>' +'<form method="post" action="/delete/#{chat["Id"]}"><button type="submit">Delete</button></form><br />' + parsed.user + '</br>' + '</br>' +  parsed.message + '</br>' + '</br>'; 
+          newarray = '<form method="get" action="/edit/'+id+'"><button type="submit">Edit</button></form>' +'<form method="post" action="/delete/'+id+'"><button type="submit">Delete</button></form><br />' + parsed.user + '</br>' + '</br>' +  parsed.message + '</br>' + '</br>'; 
           el.innerHTML = el.innerHTML + newarray
       }
 

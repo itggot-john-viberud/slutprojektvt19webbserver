@@ -11,11 +11,6 @@ enable :sessions
 
 
 
-def web()
-    
-end
-
-
 
 
 def connect()
@@ -52,14 +47,15 @@ end
 def get_user_id(username)
     db = connect()
     user_id = db.execute("SELECT Id FROM user WHERE Username = ?", username)
-    return user_id.first["Id"]
+    return user_id.first
 end
+
 
 def get_rooms_in_room(user_id)
     db = connect()
-    rooms = db.execute("select room.Id, room.Name from room
+    rooms = db.execute("SELECT room.Id, room.Name, user_room.Role from room
         inner join user_room on room.Id = user_room.RoomId
-        where user_room.UserId = ?", user_id)
+        where user_room.UserId = ?", user_id["Id"])
         return rooms
 end
     
@@ -67,7 +63,6 @@ def chattrooms(username)
     db = connect()
     user_id = get_user_id(username)
     roominfo = get_rooms_in_room(user_id)
-    web()
     return roominfo
 end
 
@@ -75,12 +70,14 @@ def get_chat(room_id)
     db = connect()
     
     result = db.execute("SELECT Id, Username, Text, Bild FROM chat WHERE RoomId = ?", room_id.to_i)
+
     return result
 end
 
 
 def show(room_id)
     chat = get_chat(room_id)
+
     return chat
     
 end
@@ -173,7 +170,18 @@ def finish_room(params)
     end
     user_id = get_user_id(session[:user])
     room_id = get_room_id(new_name)
-    db.execute("INSERT INTO user_room (UserId, RoomId, Authority) VALUES (?,?,?)", user_id, room_id, 1)
+    db.execute("INSERT INTO user_room (UserId, RoomId, Role) VALUES (?,?,?)", user_id, room_id, "Admin")
 end
 
-    
+
+def invite_execute(params)
+    db = connect()
+    user_id = db.execute("SELECT Id FROM user WHERE Username = ?", params["username"])
+    if user_id.length > 0
+        byebug
+        db.execute("INSERT INTO user_room (UserId, RoomId, Role) VALUES (?,?,?)", user_id.first["Id"], params["id"], params["role"])
+        redirect("/the_dark_room/:username")
+    else
+        redirect("/invite/:id")
+    end  
+end

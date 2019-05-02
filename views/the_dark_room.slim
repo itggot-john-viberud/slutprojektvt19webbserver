@@ -17,7 +17,11 @@ div class="wrapped"
                         form action="/leave/#{room["Id"]}" method="POST" 
                             button type="submit" value="leave" 
                                 i class="material-icons" leave
-
+                        -if room["Role"] == "Admin"
+                            form action="/invite/#{room["Id"]}" method="GET" 
+                                button type="submit" value="invite"
+                                    i class="material-icons" invite
+                        
                     p class="Name" #{room["Name"]}
     - if chats != "NOOB"
         script src="/text/websocket.js"
@@ -40,5 +44,6 @@ div class="wrapped"
                 input type="file" name="file" accept="image/*"
                 input#input name="Text" placeholder="Text" type="text"
                 input type="submit" value="Send"
+        
 
         

@@ -62,7 +62,7 @@ end
 
 get("/the_dark_room/:username") do
     username = session[:user]
-    room = chattrooms(username)
+    room= chattrooms(username)
     chat = "NOOB"
     slim(:the_dark_room, locals:{
         rooms: room, chats: chat})
@@ -76,6 +76,7 @@ get('/the_dark_room/:username/:id') do
     username = session[:user]
     room = chattrooms(username)
     chat = show(room_id)
+    
     if !request.websocket?
         slim(:the_dark_room, locals:{
             rooms: room, chats: chat})
@@ -121,7 +122,6 @@ post('/delete/:id') do
 end
 
 get("/edit/:id") do
-    byebug
     result = edit(params)
     slim(:edit, locals:{
     chat: result.first})    
@@ -139,4 +139,13 @@ end
 post("/finish_room") do
     finish_room(params)
     redirect("/the_dark_room/:username")
+end
+
+get("/invite/:id") do
+    byebug
+    slim(:invite, locals:{info_invite: params})  
+end
+
+post("/invite_execute/:id") do
+    invite_execute(params)
 end

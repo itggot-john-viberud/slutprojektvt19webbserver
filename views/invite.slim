@@ -1,0 +1,14 @@
+div class="wrapper"
+    form action="/invite_execute/#{info_invite["id"]}" method="POST" enctype="multipart/form-data"
+        article
+            h1 #{info_invite["id"]}
+            div class="info" 
+                input name="username" placeholder="Text" type="text" value="Username"
+                br
+                input type="radio" name="role" value="Admin" Admin
+                br
+                input type="radio" name="role" value="Viceadmin" Vice Admin
+                br
+                input type="radio" name="role" value="Normal" Normal
+                br
+                input type="submit" value="Update"
