@@ -1,34 +1,36 @@
 div class="wrapped"
     div class="menu"
-    form method="get" action="/create_room"
-        button type="submit" Create Room
+        form method="get" action="/create_room"
+            button type="submit" Create Room
+        form method="get" action="/editprofil/#{session[:user]}"
+            button type="submit" Edit Profil   
 
-    div class="rooms_menu"
-        - for room in rooms do
-            section class="room_menu"
-                article
-                    div class="controls"
-                        form action="/the_dark_room/#{session[:user]}/#{room["Id"]}" method="GET"
-                            button type="submit" value="show" 
-                                i class="material-icons" Show
-                        form action="/the_dark_room/#{session[:user]}" method="GET"
-                            button type="submit" value="unshow"
-                                i class="material-icons" unshow    
-                        form action="/leave/#{room["Id"]}" method="POST" 
-                            button type="submit" value="leave" 
-                                i class="material-icons" leave
-                        -if room["Role"] == "Admin"
-                            form action="/invite/#{room["Id"]}" method="GET" 
-                                button type="submit" value="invite"
-                                    i class="material-icons" invite
-                        
-                    p class="Name" #{room["Name"]}
+        div class="rooms_menu"
+            - for room in rooms do
+                section class="room_menu"
+                    article
+                        div class="controls"
+                            form action="/the_dark_room/#{session[:user]}/#{room["Id"]}" method="GET"
+                                button type="submit" value="show" 
+                                    i class="material-icons" Show
+                            form action="/the_dark_room/#{session[:user]}" method="GET"
+                                button type="submit" value="unshow"
+                                    i class="material-icons" unshow    
+                            form action="/leave/#{room["Id"]}" method="POST" 
+                                button type="submit" value="leave" 
+                                    i class="material-icons" leave
+                            -if room["Role"] == "Admin"
+                                form action="/invite/#{room["Id"]}" method="GET" 
+                                    button type="submit" value="invite"
+                                        i class="material-icons" invite
+                            
+                        p class="Name" #{room["Name"]}
     - if chats != "NOOB"
         script src="/text/websocket.js"
         div class="chat"
             - for chat in chats do
                 div class="chat" 
-                    - if chat["Username"] == session[:user]
+                    - if chat["Username"] == session[:user] || room["Role"] == "Admin"
                         form action="/edit/#{chat["Id"]}" method="GET" 
                             button type="submit" value="edit"
                                 i class="material-icons" edit
@@ -38,12 +40,22 @@ div class="wrapped"
                     p class="Username" #{chat["Username"]}
                     p class="Text" #{chat["Text"]}
                     - if chat["Bild"]
-                        img src="/img/chat/#{chat["Bild"]}"
+                        div class="chat-img" 
+                            img src="/img/chat/#{chat["Bild"]}" class="img"
             div#msgs
-            form#form action="/new_message" Method="POST" enctype="multipart/form-data"
-                input type="file" name="file" accept="image/*"
+            form#form action="/new_message" Method="POST"
                 input#input name="Text" placeholder="Text" type="text"
                 input type="submit" value="Send"
-        
+            form action="/new_picture" Method="POST" enctype="multipart/form-data"
+                input type="file" name="file" accept="image/*"
+                input type="submit" value="Send"
+        div class="users"
+            - for user in users do
+                article
+                    -if user["Bild"]
+                        div class="profile-img" 
+                            img src="/img/profil_img/#{user["Bild"]}" alt="#{user["Bild"]}" class="img"
+                    div class="info"
+                        label class="name" #{user["Username"]}
 
         

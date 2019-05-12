@@ -1,0 +1,6 @@
+form action="/editprofil_execute/#{session[:user]}" method="POST" enctype="multipart/form-data"
+        article
+            div class="info" 
+                input name="file" placeholder="file" type="file" value="#{profil["Bild"]}"
+                input name="username" placeholder="username" type="username" value="#{profil["Username"]}"
+                input type="submit" value="Update"

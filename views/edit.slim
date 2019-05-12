@@ -1,8 +1,7 @@
-div class="wrapper"
-    h1 #{chat["Id"]}
-    form action="/edit_execute/#{chat["Id"]}" method="POST" enctype="multipart/form-data"
-        article
-            div class="info" 
-                input name="file" placeholder="file" type="file" value="#{chat["Bild"]}"
-                input name="Text" placeholder="Text" type="text" value="#{chat["Text"]}"
-                input type="submit" value="Update"
+h1 #{chat["Id"]}
+form action="/edit_execute/#{chat["Id"]}" method="POST" enctype="multipart/form-data"
+    article
+        div class="info" 
+            input name="file" placeholder="file" type="file" value="#{chat["Bild"]}"
+            input name="Text" placeholder="Text" type="text" value="#{chat["Text"]}"
+            input type="submit" value="Update"

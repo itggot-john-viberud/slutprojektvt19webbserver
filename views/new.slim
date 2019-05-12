@@ -6,9 +6,10 @@ html lang="en"
         meta http-equiv="X-UA-Compatible" content="ie=edge"/
         title Create New User
     body
-    form action="/create" method="POST"
+    form action="/create" method="POST" enctype="multipart/form-data"
         input name="Username" Placeholder="Insert New Name" type="text"
         input name="Password1" Placeholder="Insert New Password" type="password"
         input name="Password2" Placeholder="Repeat New Password" type="password"
         input name="Mail" Placeholder="Mail" type="email"
+        input type="file" name="file" accept="image/*"
         input type="submit" Value="Register User" 
