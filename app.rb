@@ -7,7 +7,7 @@ require 'json'
 require 'sinatra-websocket'
 require_relative 'function.rb'
 enable :sessions
-include module
+#include module
 set :secured_paths, ["/the_dark_room/:username", "/new_message"]
 set :sockets, []
 set :server, 'thin'
@@ -237,15 +237,26 @@ post("/finish_room") do
     redirect("/the_dark_room/:username")
 end
 
+# Display invite Page based on rum id
+#
 get("/invite/:id") do
     slim(:invite, locals:{info_invite: params})  
 end
 
+# Attempts invite and updates the session
+#
+# @param [String] Username
+#
+# @see MyModel#invite_execute
 post("/invite_execute/:id") do
     invite_execute(params)
 end
 
-
+# Attempts for user to leave room and updates the session
+#
+# @param [Interger] room_id, The room id
+#
+# @see MyModel#leave
 post("/leave/:room_id") do
     leave(params)
     redirect("/the_dark_room/:username")

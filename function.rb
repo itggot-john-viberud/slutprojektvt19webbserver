@@ -6,7 +6,7 @@ require 'byebug'
 require_relative 'app.rb'
 enable :sessions
 
-module MyModule
+#module MyModule
     
 
 
